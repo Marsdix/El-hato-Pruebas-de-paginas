@@ -1,0 +1,1419 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>El Hato y el Garabato — Bodega Arribes del Duero</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Cinzel:wght@400;600&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* ─── RESET & ROOT ─────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --negro:    #0d0a07;
+  --tierra:   #251a16;
+  --vino:     #5c1f1f;
+  --dorado:   #c8a255;
+  --arena:    #e8dcc8;
+  --crema:    #f5f0e8;
+  --blanco:   #faf8f5;
+  --gris:     #9a9188;
+
+  --ff-serif: 'Cormorant Garamond', Georgia, serif;
+  --ff-caps:  'Cinzel', serif;
+  --ff-sans:  'Jost', sans-serif;
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in:  cubic-bezier(0.7, 0, 0.84, 0);
+}
+
+html { font-size: 16px; scroll-behavior: smooth; }
+
+body {
+  background: var(--negro);
+  color: var(--arena);
+  font-family: var(--ff-sans);
+  font-weight: 300;
+  line-height: 1.7;
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* ─── CURSOR PERSONALIZADO ──────────────────────────────────── */
+.cursor {
+  position: fixed;
+  width: 10px; height: 10px;
+  background: var(--dorado);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transition: transform 0.15s ease, opacity 0.3s ease;
+  transform: translate(-50%, -50%);
+}
+.cursor-ring {
+  position: fixed;
+  width: 36px; height: 36px;
+  border: 1px solid rgba(200,162,85,0.5);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9998;
+  transition: transform 0.4s var(--ease-out), opacity 0.3s ease;
+  transform: translate(-50%, -50%);
+}
+body:hover .cursor { opacity: 1; }
+
+/* ─── GRAIN OVERLAY ─────────────────────────────────────────── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+  opacity: 0.025;
+  pointer-events: none;
+  z-index: 9000;
+}
+
+/* ─── NAVEGACIÓN ────────────────────────────────────────────── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+  padding: 28px 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: background 0.5s ease, padding 0.4s ease;
+}
+nav.scrolled {
+  background: rgba(13,10,7,0.96);
+  backdrop-filter: blur(12px);
+  padding: 18px 60px;
+  border-bottom: 1px solid rgba(200,162,85,0.12);
+}
+.nav-logo {
+  font-family: var(--ff-caps);
+  font-size: 13px;
+  letter-spacing: 0.25em;
+  color: var(--dorado);
+  text-decoration: none;
+  text-transform: uppercase;
+  line-height: 1.3;
+}
+.nav-logo span { display: block; font-size: 10px; color: var(--gris); letter-spacing: 0.4em; }
+.nav-links { display: flex; gap: 40px; list-style: none; }
+.nav-links a {
+  font-family: var(--ff-sans);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(232,220,200,0.65);
+  text-decoration: none;
+  transition: color 0.3s ease;
+  position: relative;
+}
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -4px; left: 0;
+  width: 0; height: 1px;
+  background: var(--dorado);
+  transition: width 0.35s var(--ease-out);
+}
+.nav-links a:hover { color: var(--dorado); }
+.nav-links a:hover::after { width: 100%; }
+.nav-cta {
+  font-family: var(--ff-sans);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--negro);
+  background: var(--dorado);
+  padding: 10px 24px;
+  text-decoration: none;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+.nav-cta:hover { background: var(--arena); }
+
+/* ─── HERO ──────────────────────────────────────────────────── */
+.hero {
+  position: relative;
+  height: 100vh;
+  min-height: 700px;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+}
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background: url('https://elhatoyelgarabato.com/wp-content/uploads/2024/06/slider-home.jpeg') center 30% / cover no-repeat;
+  transform: scale(1.08);
+  transition: transform 8s ease;
+}
+.hero.loaded .hero-bg { transform: scale(1); }
+.hero-vignette {
+  position: absolute; inset: 0;
+  background: linear-gradient(
+    to right,
+    rgba(13,10,7,0.85) 0%,
+    rgba(13,10,7,0.5) 55%,
+    rgba(13,10,7,0.15) 100%
+  ),
+  linear-gradient(to top, rgba(13,10,7,0.9) 0%, transparent 50%);
+}
+.hero-content {
+  position: relative;
+  z-index: 2;
+  padding: 0 60px 90px;
+  max-width: 720px;
+}
+.hero-eyebrow {
+  font-family: var(--ff-sans);
+  font-size: 10px;
+  letter-spacing: 0.5em;
+  text-transform: uppercase;
+  color: var(--dorado);
+  margin-bottom: 28px;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.9s ease 0.3s, transform 0.9s var(--ease-out) 0.3s;
+}
+.hero h1 {
+  font-family: var(--ff-serif);
+  font-size: clamp(52px, 7vw, 96px);
+  font-weight: 300;
+  line-height: 1.0;
+  color: var(--blanco);
+  margin-bottom: 32px;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 1s ease 0.5s, transform 1s var(--ease-out) 0.5s;
+}
+.hero h1 em { font-style: italic; color: var(--dorado); }
+.hero-desc {
+  font-family: var(--ff-serif);
+  font-size: 18px;
+  font-weight: 300;
+  font-style: italic;
+  color: rgba(232,220,200,0.75);
+  max-width: 420px;
+  margin-bottom: 48px;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.9s ease 0.8s, transform 0.9s var(--ease-out) 0.8s;
+}
+.hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.9s ease 1s, transform 0.9s var(--ease-out) 1s;
+}
+.hero.loaded .hero-eyebrow,
+.hero.loaded h1,
+.hero.loaded .hero-desc,
+.hero.loaded .hero-actions { opacity: 1; transform: translateY(0); }
+
+.btn-primary {
+  display: inline-block;
+  font-family: var(--ff-sans);
+  font-size: 11px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--negro);
+  background: var(--dorado);
+  padding: 16px 36px;
+  text-decoration: none;
+  transition: background 0.3s ease, transform 0.3s ease;
+}
+.btn-primary:hover { background: var(--arena); transform: translateY(-2px); }
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--ff-sans);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(232,220,200,0.7);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+.btn-ghost:hover { color: var(--dorado); }
+.btn-ghost svg { width: 18px; height: 18px; transition: transform 0.3s ease; }
+.btn-ghost:hover svg { transform: translateX(4px); }
+
+/* scroll indicator */
+.hero-scroll {
+  position: absolute;
+  bottom: 36px; right: 60px;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  opacity: 0;
+  transition: opacity 1s ease 1.4s;
+}
+.hero.loaded .hero-scroll { opacity: 1; }
+.hero-scroll span {
+  font-family: var(--ff-sans);
+  font-size: 9px;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--gris);
+  writing-mode: vertical-rl;
+}
+.scroll-line {
+  width: 1px;
+  height: 60px;
+  background: linear-gradient(to bottom, var(--dorado), transparent);
+  animation: scrollLine 2s ease-in-out infinite;
+}
+@keyframes scrollLine {
+  0%   { transform: scaleY(0); transform-origin: top; }
+  50%  { transform: scaleY(1); transform-origin: top; }
+  51%  { transform: scaleY(1); transform-origin: bottom; }
+  100% { transform: scaleY(0); transform-origin: bottom; }
+}
+
+/* ─── SECCIÓN PRENSA ─────────────────────────────────────────── */
+.press {
+  background: var(--tierra);
+  border-top: 1px solid rgba(200,162,85,0.15);
+  border-bottom: 1px solid rgba(200,162,85,0.15);
+  padding: 40px 60px;
+  overflow: hidden;
+}
+.press-label {
+  text-align: center;
+  font-family: var(--ff-sans);
+  font-size: 9px;
+  letter-spacing: 0.5em;
+  text-transform: uppercase;
+  color: var(--gris);
+  margin-bottom: 28px;
+}
+.press-track {
+  display: flex;
+  gap: 64px;
+  animation: marquee 22s linear infinite;
+  width: max-content;
+}
+.press-track:hover { animation-play-state: paused; }
+@keyframes marquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.press-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--ff-caps);
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  color: rgba(154,145,136,0.7);
+  white-space: nowrap;
+  transition: color 0.3s ease;
+}
+.press-logo:hover { color: var(--dorado); }
+.press-dot { color: var(--dorado); opacity: 0.4; font-size: 8px; }
+
+/* ─── SECCIÓN INTRO ──────────────────────────────────────────── */
+.section { padding: 130px 60px; }
+.section-sm { padding: 80px 60px; }
+
+.intro {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 100px;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.intro-text .section-label {
+  font-family: var(--ff-sans);
+  font-size: 9px;
+  letter-spacing: 0.55em;
+  text-transform: uppercase;
+  color: var(--dorado);
+  margin-bottom: 28px;
+}
+.intro-text h2 {
+  font-family: var(--ff-serif);
+  font-size: clamp(38px, 4.5vw, 64px);
+  font-weight: 300;
+  line-height: 1.1;
+  color: var(--blanco);
+  margin-bottom: 32px;
+}
+.intro-text h2 em { font-style: italic; color: var(--dorado); }
+.intro-text p {
+  font-size: 15px;
+  color: rgba(232,220,200,0.65);
+  line-height: 1.85;
+  margin-bottom: 20px;
+}
+.intro-image {
+  position: relative;
+}
+.intro-image img {
+  width: 100%;
+  aspect-ratio: 4/5;
+  object-fit: cover;
+  display: block;
+}
+.intro-image::before {
+  content: '';
+  position: absolute;
+  top: -20px; left: -20px;
+  width: 60%;
+  height: 60%;
+  border: 1px solid rgba(200,162,85,0.3);
+  z-index: -1;
+}
+.intro-stat {
+  position: absolute;
+  bottom: -30px;
+  right: -30px;
+  background: var(--tierra);
+  border: 1px solid rgba(200,162,85,0.2);
+  padding: 28px 36px;
+  text-align: center;
+}
+.intro-stat strong {
+  display: block;
+  font-family: var(--ff-serif);
+  font-size: 56px;
+  font-weight: 300;
+  color: var(--dorado);
+  line-height: 1;
+}
+.intro-stat span {
+  font-family: var(--ff-sans);
+  font-size: 9px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--gris);
+}
+
+/* ─── VINOS ──────────────────────────────────────────────────── */
+.vinos-header {
+  max-width: 1200px;
+  margin: 0 auto 70px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+.vinos-header h2 {
+  font-family: var(--ff-serif);
+  font-size: clamp(38px, 5vw, 68px);
+  font-weight: 300;
+  color: var(--blanco);
+  line-height: 1.05;
+}
+.vinos-header h2 em { font-style: italic; color: var(--dorado); }
+.vinos-grid {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+}
+.vino-card {
+  position: relative;
+  overflow: hidden;
+  background: var(--tierra);
+  cursor: none;
+}
+.vino-card-inner {
+  position: relative;
+  aspect-ratio: 3/4;
+  overflow: hidden;
+}
+.vino-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.05);
+  transition: transform 0.8s var(--ease-out);
+}
+.vino-card:hover .vino-card-img { transform: scale(1); }
+.vino-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(13,10,7,0.95) 0%, rgba(13,10,7,0.3) 60%, transparent 100%);
+  transition: background 0.5s ease;
+}
+.vino-card:hover .vino-overlay {
+  background: linear-gradient(to top, rgba(13,10,7,0.98) 0%, rgba(13,10,7,0.5) 70%, rgba(13,10,7,0.1) 100%);
+}
+.vino-content {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  padding: 36px 32px;
+}
+.vino-tag {
+  font-family: var(--ff-sans);
+  font-size: 9px;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--dorado);
+  margin-bottom: 10px;
+}
+.vino-name {
+  font-family: var(--ff-serif);
+  font-size: 28px;
+  font-weight: 300;
+  color: var(--blanco);
+  margin-bottom: 8px;
+  line-height: 1.1;
+}
+.vino-varietal {
+  font-family: var(--ff-serif);
+  font-style: italic;
+  font-size: 14px;
+  color: var(--gris);
+  margin-bottom: 20px;
+}
+.vino-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--ff-sans);
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--dorado);
+  text-decoration: none;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.4s ease, transform 0.4s var(--ease-out);
+}
+.vino-card:hover .vino-cta { opacity: 1; transform: translateY(0); }
+
+/* ─── BODEGA FULLWIDTH ────────────────────────────────────────── */
+.bodega {
+  position: relative;
+  height: 80vh;
+  min-height: 500px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+.bodega-bg {
+  position: absolute; inset: 0;
+  background: url('https://elhatoyelgarabato.com/wp-content/uploads/2024/06/la-bodega-1024x819.jpeg') center / cover no-repeat;
+}
+.bodega-vignette {
+  position: absolute; inset: 0;
+  background: linear-gradient(
+    to right,
+    rgba(13,10,7,0.05) 0%,
+    rgba(13,10,7,0.6) 50%,
+    rgba(13,10,7,0.95) 100%
+  );
+}
+.bodega-content {
+  position: relative; z-index: 2;
+  margin-left: auto;
+  padding: 0 60px;
+  max-width: 560px;
+  text-align: right;
+}
+.bodega-content .section-label {
+  font-family: var(--ff-sans);
+  font-size: 9px;
+  letter-spacing: 0.55em;
+  text-transform: uppercase;
+  color: var(--dorado);
+  margin-bottom: 24px;
+}
+.bodega-content h2 {
+  font-family: var(--ff-serif);
+  font-size: clamp(42px, 5vw, 72px);
+  font-weight: 300;
+  color: var(--blanco);
+  line-height: 1.0;
+  margin-bottom: 24px;
+}
+.bodega-content h2 em { font-style: italic; color: var(--dorado); }
+.bodega-content p {
+  font-size: 15px;
+  color: rgba(232,220,200,0.65);
+  line-height: 1.85;
+  margin-bottom: 40px;
+}
+.stats-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 48px;
+  margin-bottom: 40px;
+  padding-top: 32px;
+  border-top: 1px solid rgba(200,162,85,0.15);
+}
+.stat-item { text-align: right; }
+.stat-item strong {
+  display: block;
+  font-family: var(--ff-serif);
+  font-size: 42px;
+  font-weight: 300;
+  color: var(--dorado);
+  line-height: 1;
+}
+.stat-item span {
+  font-family: var(--ff-sans);
+  font-size: 9px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--gris);
+}
+
+/* ─── EQUIPO ──────────────────────────────────────────────────── */
+.equipo {
+  background: var(--tierra);
+  padding: 130px 60px;
+}
+.equipo-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 100px;
+  align-items: center;
+}
+.equipo-image img {
+  width: 100%;
+  aspect-ratio: 5/4;
+  object-fit: cover;
+  display: block;
+}
+.equipo-text .section-label {
+  font-family: var(--ff-sans);
+  font-size: 9px;
+  letter-spacing: 0.55em;
+  text-transform: uppercase;
+  color: var(--dorado);
+  margin-bottom: 28px;
+}
+.equipo-text h2 {
+  font-family: var(--ff-serif);
+  font-size: clamp(38px, 4vw, 58px);
+  font-weight: 300;
+  color: var(--blanco);
+  line-height: 1.1;
+  margin-bottom: 28px;
+}
+.equipo-text h2 em { font-style: italic; color: var(--dorado); }
+.equipo-text p {
+  font-size: 15px;
+  color: rgba(232,220,200,0.65);
+  line-height: 1.85;
+  margin-bottom: 20px;
+}
+.feature-list {
+  list-style: none;
+  margin: 36px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.feature-list li {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-family: var(--ff-sans);
+  font-size: 13px;
+  color: rgba(232,220,200,0.7);
+  letter-spacing: 0.04em;
+}
+.feature-list li::before {
+  content: '';
+  width: 24px; height: 1px;
+  background: var(--dorado);
+  flex-shrink: 0;
+}
+
+/* ─── VISITA ──────────────────────────────────────────────────── */
+.visita {
+  position: relative;
+  padding: 130px 60px;
+  overflow: hidden;
+}
+.visita::before {
+  content: '';
+  position: absolute;
+  top: 0; right: 0;
+  width: 45%;
+  height: 100%;
+  background: url('https://elhatoyelgarabato.com/wp-content/uploads/2024/09/46-1024x819-1.png') center / cover no-repeat;
+  opacity: 0.25;
+}
+.visita::after {
+  content: '';
+  position: absolute;
+  top: 0; right: 0;
+  width: 45%;
+  height: 100%;
+  background: linear-gradient(to right, var(--negro) 0%, transparent 30%),
+              linear-gradient(to top, var(--negro) 0%, transparent 30%);
+}
+.visita-inner {
+  position: relative; z-index: 2;
+  max-width: 600px;
+}
+.visita .section-label {
+  font-family: var(--ff-sans);
+  font-size: 9px;
+  letter-spacing: 0.55em;
+  text-transform: uppercase;
+  color: var(--dorado);
+  margin-bottom: 28px;
+}
+.visita h2 {
+  font-family: var(--ff-serif);
+  font-size: clamp(42px, 5vw, 72px);
+  font-weight: 300;
+  color: var(--blanco);
+  line-height: 1.0;
+  margin-bottom: 28px;
+}
+.visita h2 em { font-style: italic; color: var(--dorado); }
+.visita p {
+  font-size: 15px;
+  color: rgba(232,220,200,0.65);
+  line-height: 1.85;
+  margin-bottom: 48px;
+  max-width: 460px;
+}
+.visita-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-bottom: 48px;
+  border: 1px solid rgba(200,162,85,0.15);
+}
+.visita-option {
+  padding: 24px 28px;
+  border-bottom: 1px solid rgba(200,162,85,0.1);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  transition: background 0.3s ease;
+  cursor: none;
+}
+.visita-option:last-child { border-bottom: none; }
+.visita-option:hover { background: rgba(200,162,85,0.06); }
+.visita-option-num {
+  font-family: var(--ff-serif);
+  font-size: 32px;
+  color: rgba(200,162,85,0.3);
+  line-height: 1;
+  min-width: 40px;
+}
+.visita-option-text strong {
+  display: block;
+  font-family: var(--ff-sans);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: var(--blanco);
+  margin-bottom: 4px;
+}
+.visita-option-text span {
+  font-size: 12px;
+  color: var(--gris);
+}
+
+/* ─── CITA / QUOTE ────────────────────────────────────────────── */
+.quote-section {
+  padding: 100px 60px;
+  background: var(--vino);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.quote-section::before {
+  content: '"';
+  position: absolute;
+  top: -60px; left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--ff-serif);
+  font-size: 400px;
+  color: rgba(255,255,255,0.04);
+  line-height: 1;
+  pointer-events: none;
+}
+.quote-text {
+  font-family: var(--ff-serif);
+  font-size: clamp(26px, 3.5vw, 46px);
+  font-weight: 300;
+  font-style: italic;
+  color: var(--blanco);
+  max-width: 900px;
+  margin: 0 auto 32px;
+  line-height: 1.4;
+  position: relative;
+  z-index: 1;
+}
+.quote-source {
+  font-family: var(--ff-sans);
+  font-size: 10px;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.45);
+  position: relative; z-index: 1;
+}
+
+/* ─── CONTACTO ────────────────────────────────────────────────── */
+.contacto {
+  background: var(--tierra);
+  padding: 130px 60px;
+}
+.contacto-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 100px;
+}
+.contacto-left .section-label {
+  font-family: var(--ff-sans);
+  font-size: 9px;
+  letter-spacing: 0.55em;
+  text-transform: uppercase;
+  color: var(--dorado);
+  margin-bottom: 28px;
+}
+.contacto-left h2 {
+  font-family: var(--ff-serif);
+  font-size: clamp(36px, 4vw, 56px);
+  font-weight: 300;
+  color: var(--blanco);
+  line-height: 1.1;
+  margin-bottom: 32px;
+}
+.contacto-left h2 em { font-style: italic; color: var(--dorado); }
+.contact-items {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+.contact-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.contact-item label {
+  font-family: var(--ff-sans);
+  font-size: 9px;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--dorado);
+}
+.contact-item a, .contact-item p {
+  font-family: var(--ff-serif);
+  font-size: 17px;
+  color: rgba(232,220,200,0.8);
+  text-decoration: none;
+  font-style: italic;
+  transition: color 0.3s ease;
+}
+.contact-item a:hover { color: var(--dorado); }
+
+.contacto-right {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 16px;
+}
+.contacto-right .section-label {
+  font-family: var(--ff-sans);
+  font-size: 9px;
+  letter-spacing: 0.55em;
+  text-transform: uppercase;
+  color: var(--dorado);
+  margin-bottom: 12px;
+}
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.form-group input,
+.form-group textarea {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(200,162,85,0.15);
+  color: var(--arena);
+  font-family: var(--ff-serif);
+  font-size: 15px;
+  padding: 14px 18px;
+  outline: none;
+  resize: none;
+  transition: border-color 0.3s ease;
+}
+.form-group input:focus,
+.form-group textarea:focus { border-color: rgba(200,162,85,0.5); }
+.form-group input::placeholder,
+.form-group textarea::placeholder { color: rgba(154,145,136,0.5); font-style: italic; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+/* ─── FOOTER ──────────────────────────────────────────────────── */
+footer {
+  background: var(--negro);
+  border-top: 1px solid rgba(200,162,85,0.12);
+  padding: 70px 60px 40px;
+}
+.footer-top {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 60px;
+  padding-bottom: 60px;
+  border-bottom: 1px solid rgba(200,162,85,0.1);
+  margin-bottom: 40px;
+}
+.footer-brand .brand-name {
+  font-family: var(--ff-caps);
+  font-size: 14px;
+  letter-spacing: 0.2em;
+  color: var(--dorado);
+  margin-bottom: 16px;
+  display: block;
+}
+.footer-brand p {
+  font-size: 13px;
+  color: var(--gris);
+  line-height: 1.8;
+  max-width: 280px;
+}
+.footer-col h4 {
+  font-family: var(--ff-sans);
+  font-size: 9px;
+  letter-spacing: 0.45em;
+  text-transform: uppercase;
+  color: var(--dorado);
+  margin-bottom: 24px;
+}
+.footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+.footer-col a {
+  font-family: var(--ff-serif);
+  font-size: 15px;
+  color: var(--gris);
+  text-decoration: none;
+  font-style: italic;
+  transition: color 0.3s ease;
+}
+.footer-col a:hover { color: var(--dorado); }
+.footer-bottom {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.footer-copy {
+  font-size: 11px;
+  color: rgba(154,145,136,0.5);
+  letter-spacing: 0.1em;
+}
+.social-links {
+  display: flex;
+  gap: 24px;
+}
+.social-links a {
+  font-family: var(--ff-sans);
+  font-size: 9px;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: rgba(154,145,136,0.5);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+.social-links a:hover { color: var(--dorado); }
+
+/* ─── REVEAL ANIMATIONS ──────────────────────────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.9s var(--ease-out), transform 0.9s var(--ease-out);
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-delay-1 { transition-delay: 0.15s; }
+.reveal-delay-2 { transition-delay: 0.30s; }
+.reveal-delay-3 { transition-delay: 0.45s; }
+.reveal-left {
+  opacity: 0;
+  transform: translateX(-40px);
+  transition: opacity 0.9s var(--ease-out), transform 0.9s var(--ease-out);
+}
+.reveal-left.visible { opacity: 1; transform: translateX(0); }
+.reveal-right {
+  opacity: 0;
+  transform: translateX(40px);
+  transition: opacity 0.9s var(--ease-out), transform 0.9s var(--ease-out);
+}
+.reveal-right.visible { opacity: 1; transform: translateX(0); }
+
+/* ─── LÍNEA DECORATIVA ─────────────────────────────────────────  */
+.divider {
+  width: 40px; height: 1px;
+  background: var(--dorado);
+  margin-bottom: 24px;
+}
+
+/* ─── RESPONSIVE ──────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  nav { padding: 20px 30px; }
+  .nav-links { display: none; }
+  .hero-content { padding: 0 30px 70px; }
+  .hero-scroll { right: 30px; }
+  .section { padding: 90px 30px; }
+  .intro { grid-template-columns: 1fr; gap: 60px; }
+  .intro-stat { position: static; margin-top: 24px; display: inline-block; }
+  .vinos-grid { grid-template-columns: 1fr; gap: 2px; }
+  .bodega-content { padding: 0 30px; max-width: 100%; }
+  .equipo { padding: 90px 30px; }
+  .equipo-inner { grid-template-columns: 1fr; gap: 50px; }
+  .visita { padding: 90px 30px; }
+  .visita::before, .visita::after { display: none; }
+  .contacto { padding: 90px 30px; }
+  .contacto-inner { grid-template-columns: 1fr; gap: 60px; }
+  .footer-top { grid-template-columns: 1fr 1fr; gap: 40px; }
+  .press { padding: 30px; }
+}
+
+/* ─── SCROLLBAR ──────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--negro); }
+::-webkit-scrollbar-thumb { background: var(--dorado); border-radius: 2px; }
+
+/* ─── SELECTION ──────────────────────────────────────────────── */
+::selection { background: var(--dorado); color: var(--negro); }
+</style>
+</head>
+<body>
+
+<!-- CURSOR -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAVEGACIÓN -->
+<nav id="navbar">
+  <a href="#" class="nav-logo">
+    El Hato y el Garabato
+    <span>Bodega · Arribes del Duero</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#bodega">La Bodega</a></li>
+    <li><a href="#vinos">Vinos</a></li>
+    <li><a href="#equipo">Nosotros</a></li>
+    <li><a href="#visita">Visitas</a></li>
+    <li><a href="#contacto">Contacto</a></li>
+  </ul>
+  <a href="https://elhatoyelgarabato.com/tienda/" class="nav-cta">Tienda Online</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-vignette"></div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">Parque Natural · Arribes del Duero · Zamora</p>
+    <h1>Donde el<br>camino<br><em>termina.</em></h1>
+    <p class="hero-desc">Vinos de variedades ancestrales, viñas centenarias y elaboración artesanal en el confín ibérico.</p>
+    <div class="hero-actions">
+      <a href="https://elhatoyelgarabato.com/tienda/" class="btn-primary">Descubrir nuestros vinos</a>
+      <a href="#bodega" class="btn-ghost">
+        Conocer la bodega
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+  <div class="hero-scroll">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- PRENSA -->
+<section class="press">
+  <p class="press-label">Presencia en medios</p>
+  <div class="press-track">
+    <span class="press-logo">Robert Parker Wine Advocate</span>
+    <span class="press-dot">✦</span>
+    <span class="press-logo">James Suckling · Top 100 Value Wines 2025</span>
+    <span class="press-dot">✦</span>
+    <span class="press-logo">Condé Nast Traveler</span>
+    <span class="press-dot">✦</span>
+    <span class="press-logo">Spanish Wine Lover</span>
+    <span class="press-dot">✦</span>
+    <span class="press-logo">El País</span>
+    <span class="press-dot">✦</span>
+    <span class="press-logo">La Vanguardia</span>
+    <span class="press-dot">✦</span>
+    <span class="press-logo">Planeta Vino</span>
+    <span class="press-dot">✦</span>
+    <span class="press-logo">ABC · Sobremesa</span>
+    <span class="press-dot">✦</span>
+    <!-- duplicado para efecto infinito -->
+    <span class="press-logo">Robert Parker Wine Advocate</span>
+    <span class="press-dot">✦</span>
+    <span class="press-logo">James Suckling · Top 100 Value Wines 2025</span>
+    <span class="press-dot">✦</span>
+    <span class="press-logo">Condé Nast Traveler</span>
+    <span class="press-dot">✦</span>
+    <span class="press-logo">Spanish Wine Lover</span>
+    <span class="press-dot">✦</span>
+    <span class="press-logo">El País</span>
+    <span class="press-dot">✦</span>
+    <span class="press-logo">La Vanguardia</span>
+    <span class="press-dot">✦</span>
+    <span class="press-logo">Planeta Vino</span>
+    <span class="press-dot">✦</span>
+    <span class="press-logo">ABC · Sobremesa</span>
+    <span class="press-dot">✦</span>
+  </div>
+</section>
+
+<!-- INTRO / BODEGA -->
+<section class="section" id="bodega">
+  <div class="intro">
+    <div class="intro-image reveal-left">
+      <img src="https://elhatoyelgarabato.com/wp-content/uploads/2024/06/la-bodega-1024x819.jpeg" alt="La bodega El Hato y el Garabato">
+      <div class="intro-stat">
+        <strong>100</strong>
+        <span>años de viñas</span>
+      </div>
+    </div>
+    <div class="intro-text reveal-right">
+      <div class="divider"></div>
+      <p class="section-label">La Bodega · Arribes del Duero</p>
+      <h2>Un rincón donde<br>el Duero se hace<br><em>frontera.</em></h2>
+      <p>Situada en el Parque Natural Arribes del Duero, dentro de la Reserva de la Biosfera Meseta Ibérica, nuestra bodega nace de 8 hectáreas de viñas viejas de entre 80 y 120 años.</p>
+      <p>Una antigua casa de labranza restaurada alberga nuestra pequeña bodega, donde la intervención mínima y el respeto por la tradición definen cada botella.</p>
+      <a href="https://elhatoyelgarabato.com/bodega-y-vinas/" class="btn-ghost" style="margin-top:12px;">
+        Explorar la bodega
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:18px;height:18px;">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- VINOS -->
+<section class="section" id="vinos" style="background: var(--tierra); padding-top: 100px; padding-bottom: 100px;">
+  <div class="vinos-header reveal">
+    <h2>Nuestros<br><em>vinos</em></h2>
+    <a href="https://elhatoyelgarabato.com/tienda/" class="btn-ghost">
+      Ver toda la colección
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:18px;height:18px;">
+        <path d="M5 12h14M12 5l7 7-7 7"/>
+      </svg>
+    </a>
+  </div>
+  <div class="vinos-grid">
+    <div class="vino-card reveal reveal-delay-1">
+      <div class="vino-card-inner">
+        <img class="vino-card-img" src="https://elhatoyelgarabato.com/wp-content/uploads/2024/06/vinos-1024x577.jpeg" alt="Ecléctico Barrica">
+        <div class="vino-overlay"></div>
+        <div class="vino-content">
+          <p class="vino-tag">Tinto · Barrica</p>
+          <h3 class="vino-name">Ecléctico<br>Barrica</h3>
+          <p class="vino-varietal">Juan García · Rufete · Bruñal</p>
+          <a href="https://elhatoyelgarabato.com/tienda/" class="vino-cta">
+            Ver vino
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:14px;height:14px;">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="vino-card reveal reveal-delay-2">
+      <div class="vino-card-inner">
+        <img class="vino-card-img" src="https://elhatoyelgarabato.com/wp-content/uploads/2024/06/equipo-1024x819.jpeg" alt="De Buena Jera">
+        <div class="vino-overlay"></div>
+        <div class="vino-content">
+          <p class="vino-tag">Tinto · Crianza</p>
+          <h3 class="vino-name">De Buena<br>Jera</h3>
+          <p class="vino-varietal">Juan García · Viñas centenarias</p>
+          <a href="https://elhatoyelgarabato.com/tienda/" class="vino-cta">
+            Ver vino
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:14px;height:14px;">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="vino-card reveal reveal-delay-3">
+      <div class="vino-card-inner">
+        <img class="vino-card-img" src="https://elhatoyelgarabato.com/wp-content/uploads/2024/06/slider-home.jpeg" alt="Colección Ecléctico">
+        <div class="vino-overlay"></div>
+        <div class="vino-content">
+          <p class="vino-tag">Colección · Microelaboraciones</p>
+          <h3 class="vino-name">Ecléctico<br>Colección</h3>
+          <p class="vino-varietal">Rufete Blanco · Malvasía · Puesta del Sol</p>
+          <a href="https://elhatoyelgarabato.com/tienda/" class="vino-cta">
+            Ver vino
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:14px;height:14px;">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CITA -->
+<section class="quote-section">
+  <p class="quote-text">«Hay una historia detrás de nuestros vinos, y queremos compartirla.»</p>
+  <p class="quote-source">El Hato y el Garabato · Formariz, Zamora</p>
+</section>
+
+<!-- BODEGA FULLWIDTH -->
+<div class="bodega">
+  <div class="bodega-bg"></div>
+  <div class="bodega-vignette"></div>
+  <div class="bodega-content reveal-right">
+    <p class="section-label">Arribes del Duero</p>
+    <h2>8 hectáreas.<br><em>Viñas viejas.</em><br>Baja intervención.</h2>
+    <p>Elaboramos pocas botellas para poder trabajar directamente en el proceso, desde la viña a la botella, de forma artesanal, cuidando con nuestras manos cada paso.</p>
+    <div class="stats-row">
+      <div class="stat-item">
+        <strong>8</strong>
+        <span>hectáreas</span>
+      </div>
+      <div class="stat-item">
+        <strong>100<span style="font-size:22px">+</span></strong>
+        <span>años de viñas</span>
+      </div>
+      <div class="stat-item">
+        <strong>0</strong>
+        <span>aditivos</span>
+      </div>
+    </div>
+    <a href="https://elhatoyelgarabato.com/bodega-y-vinas/" class="btn-primary">Conocer la bodega</a>
+  </div>
+</div>
+
+<!-- EQUIPO -->
+<section class="equipo" id="equipo">
+  <div class="equipo-inner">
+    <div class="equipo-text reveal-left">
+      <div class="divider"></div>
+      <p class="section-label">Las personas detrás del vino</p>
+      <h2>Un proyecto<br><em>familiar</em><br>y artesanal.</h2>
+      <p>Somos una bodega minúscula con un equipo familiar. Elaborar pocas botellas nos permite estar presentes en cada paso, desde que brota la primera hoja hasta que el corcho sella la historia.</p>
+      <ul class="feature-list">
+        <li>Viticultura orgánica certificada</li>
+        <li>Sin aditivos ni tecnología enológica</li>
+        <li>Variedades ancestrales y autóctonas</li>
+        <li>Poca analítica, mucha intuición</li>
+        <li>Embotellado sin filtrar</li>
+      </ul>
+      <a href="https://elhatoyelgarabato.com/quienes-somos/" class="btn-primary">Conocer el equipo</a>
+    </div>
+    <div class="equipo-image reveal-right">
+      <img src="https://elhatoyelgarabato.com/wp-content/uploads/2024/06/equipo-1024x819.jpeg" alt="El equipo de El Hato y el Garabato">
+    </div>
+  </div>
+</section>
+
+<!-- VISITA -->
+<section class="visita" id="visita">
+  <div class="visita-inner">
+    <div class="divider reveal"></div>
+    <p class="section-label reveal">Enoturismo · Arribes del Duero</p>
+    <h2 class="reveal">Una visita<br><em>única.</em></h2>
+    <p class="reveal">Ven a conocer una zona y variedades únicas, experimentar un enoturismo diferente y vivir una experiencia relajada en nuestras viñas y bodega.</p>
+    <div class="visita-options reveal">
+      <div class="visita-option">
+        <span class="visita-option-num">01</span>
+        <div class="visita-option-text">
+          <strong>Visita a la bodega y viñedo</strong>
+          <span>Recorrido completo por las instalaciones y cata de vinos</span>
+        </div>
+      </div>
+      <div class="visita-option">
+        <span class="visita-option-num">02</span>
+        <div class="visita-option-text">
+          <strong>Paseo entre viñas centenarias</strong>
+          <span>Caminata guiada por los pagos históricos de Arribes</span>
+        </div>
+      </div>
+      <div class="visita-option">
+        <span class="visita-option-num">03</span>
+        <div class="visita-option-text">
+          <strong>Maridaje con productos locales</strong>
+          <span>Experiencia gastronómica con elaboraciones de la comarca</span>
+        </div>
+      </div>
+    </div>
+    <a href="https://elhatoyelgarabato.com/visita-a-la-bodega-y-vina/" class="btn-primary reveal">Información y reserva</a>
+  </div>
+</section>
+
+<!-- CONTACTO -->
+<section class="contacto" id="contacto">
+  <div class="contacto-inner">
+    <div class="contacto-left reveal-left">
+      <div class="divider"></div>
+      <p class="section-label">Estamos aquí</p>
+      <h2>Hablemos<br>de <em>vino.</em></h2>
+      <div class="contact-items">
+        <div class="contact-item">
+          <label>Correo electrónico</label>
+          <a href="mailto:pedidos@elhatoyelgarabato.com">pedidos@elhatoyelgarabato.com</a>
+        </div>
+        <div class="contact-item">
+          <label>Teléfono</label>
+          <a href="tel:+34685501561">+34 685 50 15 61</a>
+        </div>
+        <div class="contact-item">
+          <label>Dirección</label>
+          <p>Calle Palazuelo, 4<br>49230 Formariz · Zamora</p>
+        </div>
+      </div>
+    </div>
+    <div class="contacto-right reveal-right">
+      <p class="section-label">Envíanos un mensaje</p>
+      <div class="form-row">
+        <div class="form-group">
+          <input type="text" placeholder="Nombre">
+        </div>
+        <div class="form-group">
+          <input type="email" placeholder="Correo electrónico">
+        </div>
+      </div>
+      <div class="form-group">
+        <input type="text" placeholder="Asunto">
+      </div>
+      <div class="form-group">
+        <textarea rows="5" placeholder="Tu mensaje…"></textarea>
+      </div>
+      <button class="btn-primary" style="border:none; cursor:none; width:100%; margin-top:8px;">Enviar mensaje</button>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <span class="brand-name">El Hato y el Garabato</span>
+      <p>Nuestros vinos representan las variedades típicas de esta zona donde el camino termina. Parque Natural Arribes del Duero, Zamora.</p>
+    </div>
+    <div class="footer-col">
+      <h4>La Bodega</h4>
+      <ul>
+        <li><a href="https://elhatoyelgarabato.com/quienes-somos/">Nosotros</a></li>
+        <li><a href="https://elhatoyelgarabato.com/bodega-y-vinas/">Bodega y Viñas</a></li>
+        <li><a href="https://elhatoyelgarabato.com/visita-a-la-bodega-y-vina/">Visitas</a></li>
+        <li><a href="https://elhatoyelgarabato.com/blog/">Blog</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Vinos</h4>
+      <ul>
+        <li><a href="https://elhatoyelgarabato.com/tienda/">Tienda online</a></li>
+        <li><a href="https://buscador-vino.elhatoyelgarabato.com/">Maridajes</a></li>
+        <li><a href="https://elhatoyelgarabato.com/tienda/">Ecléctico Barrica</a></li>
+        <li><a href="https://elhatoyelgarabato.com/tienda/">De Buena Jera</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Legal</h4>
+      <ul>
+        <li><a href="https://elhatoyelgarabato.com/aviso-legal/">Aviso legal</a></li>
+        <li><a href="https://elhatoyelgarabato.com/terminos-y-condiciones/">Términos y condiciones</a></li>
+        <li><a href="https://elhatoyelgarabato.com/contacto-ch/">Contacto</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p class="footer-copy">© 2025 El Hato y el Garabato · Formariz, Zamora</p>
+    <div class="social-links">
+      <a href="https://www.instagram.com/elhatoyelgarabato/">Instagram</a>
+      <a href="https://www.facebook.com/elhatoyelgarabato">Facebook</a>
+      <a href="https://www.youtube.com/@elhatoyelgarabato.nuestrac4070">YouTube</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ─── CURSOR ──────────────────────────────────────────────────────
+const cursor = document.getElementById('cursor');
+const ring   = document.getElementById('cursorRing');
+let mx = 0, my = 0, rx = 0, ry = 0;
+
+document.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY;
+  cursor.style.left = mx + 'px';
+  cursor.style.top  = my + 'px';
+});
+
+(function animRing() {
+  rx += (mx - rx) * 0.12;
+  ry += (my - ry) * 0.12;
+  ring.style.left = rx + 'px';
+  ring.style.top  = ry + 'px';
+  requestAnimationFrame(animRing);
+})();
+
+document.querySelectorAll('a, button, .vino-card, .visita-option').forEach(el => {
+  el.addEventListener('mouseenter', () => {
+    cursor.style.transform = 'translate(-50%,-50%) scale(2)';
+    ring.style.transform   = 'translate(-50%,-50%) scale(1.6)';
+    ring.style.borderColor = 'rgba(200,162,85,0.8)';
+  });
+  el.addEventListener('mouseleave', () => {
+    cursor.style.transform = 'translate(-50%,-50%) scale(1)';
+    ring.style.transform   = 'translate(-50%,-50%) scale(1)';
+    ring.style.borderColor = 'rgba(200,162,85,0.5)';
+  });
+});
+
+// ─── HERO LOAD ───────────────────────────────────────────────────
+window.addEventListener('load', () => {
+  document.getElementById('hero').classList.add('loaded');
+});
+
+// ─── NAV SCROLL ─────────────────────────────────────────────────
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  navbar.classList.toggle('scrolled', window.scrollY > 60);
+}, { passive: true });
+
+// ─── REVEAL ON SCROLL ────────────────────────────────────────────
+const revealEls = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      io.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+revealEls.forEach(el => io.observe(el));
+
+// ─── SMOOTH SCROLL ───────────────────────────────────────────────
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) {
+      e.preventDefault();
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+});
+</script>
+</body>
+</html>
